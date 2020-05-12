@@ -1,5 +1,6 @@
 import math
 import random
+import timeit  # we import the timeit module
 from _decimal import Decimal
 from functools import reduce
 from itertools import compress
@@ -163,19 +164,6 @@ def student_criteria(m, N, y_table, beta_coefficients):
     to_print = map(lambda x: x[0] + " " + x[1], zip(beta_i, importance_to_print))
     print(*to_print, sep="; ")
     print_equation(beta_coefficients, importance)
-    # y = []
-    # x = []
-    # for i in range(len(list(t_i))):
-    #     x.append(i)
-    #     if t_i[i] > t_our:
-    #         y.append(t_i[i])
-    #     else:
-    #         y.append(-t_i[i])
-    #
-    # plot.plot(x, y)
-    # plot.grid(True)
-    # plot.axis([0, 11, -11, 11])
-    # plot.show()
     return importance
 
 
@@ -203,6 +191,20 @@ def fisher_criteria(m, N, d, x_table, y_table, b_coefficients, importance):
     return True if f_p < f_t else False
 
 
+SETUP_CODE = ''' #We import modules
+from lab6 import generate_factors_table
+from lab6 import natur_plan_raw
+from lab6 import generate_y
+from lab6 import cochran_criteria
+from lab6 import print_matrix
+from lab6 import find_coefficients
+from lab6 import print_equation
+from lab6 import student_criteria
+from lab6 import fisher_criteria
+
+
+'''
+TEST_CODE = ''' #We create a variable. In that variable, we are storing the code we want to test
 m = 3
 N = 15
 
@@ -218,3 +220,8 @@ print_equation(coefficients)
 importance = student_criteria(m, N, y_arr, coefficients)
 d = len(list(filter(None, importance)))
 fisher_criteria(m, N, d, natural_plan, y_arr, coefficients, importance)
+'''
+avr_time = timeit.timeit(setup = SETUP_CODE,
+                          stmt = TEST_CODE, number=100) / 100 #We call the time.timeit() function.
+print(avr_time)
+#0.19104873100000003
